@@ -1,28 +1,42 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import NewsFeed from './components/NewsFeed';
+import SubmitNews from './components/SubmitNews';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [theme, setTheme] = useState('light');
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') root.classList.add('dark');
+    else root.classList.remove('dark');
+  }, [theme]);
+
+  // In a real app, submitted news would go to the backend. For now, we just toast.
+  const handleSubmitNews = (payload) => {
+    alert(`Submitted: ${payload.title} (Category: ${payload.tag})`);
+  };
+
+  const toggleTheme = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
+    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50">
+      <Navbar onSearch={setSearch} onToggleTheme={toggleTheme} />
+      <Hero />
+      <NewsFeed search={search} />
+
+      {/* Ad slot */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mt-10 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-800 p-6 text-sm text-neutral-500 dark:text-neutral-400 text-center">
+          Your ad could be displayed here (paste your ad script/div).
         </div>
       </div>
+
+      <SubmitNews onSubmit={handleSubmitNews} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
